@@ -2,13 +2,24 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-
+import LoginPage from "./pages/LoginPage/LoginPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import { ProtectedRoute } from "./components/protectedRoute/ProtectedRoute";
+import HomePage from "./pages/HomePage/HomePage";
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <HomePage></HomePage>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

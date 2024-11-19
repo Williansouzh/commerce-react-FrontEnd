@@ -17,14 +17,29 @@ interface LoginResponse {
     name: string;
   };
 }
-
+export const register = async (
+  email: string,
+  password: string,
+  confirmPassword: string,
+  name: string
+): Promise<LoginResponse> => {
+  const response = await api.post<LoginResponse>("/auth/register", {
+    name,
+    email,
+    password,
+    confirmPassword,
+  });
+  return response.data;
+};
 export const login = async (
   email: string,
-  password: string
+  password: string,
+  confirmPassword: string
 ): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/auth/login", {
     email,
     password,
+    confirmPassword,
   });
   return response.data;
 };
