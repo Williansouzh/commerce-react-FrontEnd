@@ -6,6 +6,8 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import { ProtectedRoute } from "./components/protectedRoute/ProtectedRoute";
 import HomePage from "./pages/HomePage/HomePage";
+import ProductsSection from "./pages/Products/ProductsPage";
+import LayoutPage from "./components/Layoult/Layout";
 function App() {
   return (
     <div className="App">
@@ -16,7 +18,19 @@ function App() {
           path="/home"
           element={
             <ProtectedRoute>
-              <HomePage></HomePage>
+              <LayoutPage>
+                <HomePage />
+              </LayoutPage>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute>
+              <LayoutPage>
+                <ProductsSection />
+              </LayoutPage>
             </ProtectedRoute>
           }
         />

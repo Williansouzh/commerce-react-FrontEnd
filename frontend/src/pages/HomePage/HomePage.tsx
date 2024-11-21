@@ -10,10 +10,8 @@ import CategorySectionComponent from "../../components/CategorySection/CategoryS
 export default function Homepage() {
   return (
     <div>
-      <HeaderComponent />
       <HeroSectionComponent />
       <CategorySectionComponent />
-      <FooterComponnet />
     </div>
   );
 }

@@ -69,6 +69,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const token = data.token;
       console.log("Received token:", token);
 
+      console.log(
+        "Received token == localStorage token?:",
+        token === localStorage.getItem("token")
+      );
       localStorage.setItem("token", token);
       setToken(token);
 

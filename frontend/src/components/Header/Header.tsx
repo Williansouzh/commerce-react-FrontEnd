@@ -9,6 +9,7 @@ import {
   CartIcon,
   CartCount,
 } from "./Header.styles";
+import HeaderCart from "../Cart/Cart";
 export default function HeaderComponent() {
   return (
     <Header>
@@ -20,10 +21,7 @@ export default function HeaderComponent() {
         <NavLink to={"/contact"}>Contact</NavLink>
       </Nav>
       <SearchBar placeholder="Search..." />
-      <CartIcon>
-        <ShoppingCart />
-        <CartCount>3</CartCount>
-      </CartIcon>
+      <HeaderCart />
     </Header>
   );
 }

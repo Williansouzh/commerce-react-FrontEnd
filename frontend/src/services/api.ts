@@ -1,4 +1,6 @@
 import axios from "axios";
+import { AuthProvider } from "../contexts/AuthContext";
+import { Product } from "../pages/Products/ProductsPage";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -8,22 +10,36 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 interface Category {
   id: string;
   name: string;
 }
+const isTokenValid = (token: string): boolean => {
+  try {
+    console.log("Checking token validity:", token);
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    console.log("Decoded token payload:", payload);
+    return payload.exp * 1000 > Date.now();
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return false;
+  }
+};
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("x-access-token");
+    const token = localStorage.getItem("token");
     if (token) {
-      config.headers["x-access-token"] = token; // Attach the token to the request headers
+      config.headers["x-access-token"] = token;
     }
+    console.log("Request Headers: ", config.headers);
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+
 interface LoginResponse {
   token: string;
   user: {
@@ -32,6 +48,7 @@ interface LoginResponse {
     name: string;
   };
 }
+
 export const register = async (
   email: string,
   password: string,
@@ -46,6 +63,7 @@ export const register = async (
   });
   return response.data;
 };
+
 export const login = async (
   email: string,
   password: string,
@@ -58,6 +76,7 @@ export const login = async (
   });
   return response.data;
 };
+
 export const getCategories = async (): Promise<Category[]> => {
   try {
     const response = await api.get("/admin/category");
@@ -69,11 +88,16 @@ export const getCategories = async (): Promise<Category[]> => {
     }
   } catch (error) {
     console.error("Error fetching categories", error);
+    console.log("localstorage token: ", localStorage.getItem("token"));
     throw error;
   }
 };
 
 export const createCategory = async (): Promise<[Category]> => {
   const response = await api.post("/admin/category");
+  return response.data;
+};
+export const getAllProducts = async (): Promise<[Product]> => {
+  const response = await api.get("/products");
   return response.data;
 };
