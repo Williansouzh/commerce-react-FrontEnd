@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
 
-// Types
 export interface CartItem {
   id: string;
   name: string;
@@ -8,7 +7,6 @@ export interface CartItem {
   quantity: number;
 }
 
-// Styled Components
 export const CartContainer = styled.div`
   position: relative;
   z-index: 1;

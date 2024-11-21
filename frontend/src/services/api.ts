@@ -80,7 +80,6 @@ export const login = async (
 export const getCategories = async (): Promise<Category[]> => {
   try {
     const response = await api.get("/admin/category");
-    console.log("RESPONSE =================== ", response.data.categories);
     if (response.data && Array.isArray(response.data.categories)) {
       return response.data.categories;
     } else {

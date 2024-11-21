@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { ShoppingCart, Plus, Minus, X } from "lucide-react";
 import {
   CartItem,
@@ -51,7 +51,7 @@ export default function HeaderCart() {
   const handleCheckout = () => {
     console.log("Proceeding to checkout");
   };
-
+  useEffect(() => {});
   return (
     <CartContainer>
       <CartIcon

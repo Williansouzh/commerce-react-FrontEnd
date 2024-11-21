@@ -1,6 +1,5 @@
 import styled, { css, keyframes } from "styled-components";
 
-// Define the props for the Button component
 export interface ButtonProps {
   color?: string;
   size?: "small" | "medium" | "large";
@@ -12,7 +11,6 @@ export interface ButtonProps {
   type?: "button" | "submit" | "reset";
 }
 
-// Define the default theme colors
 const theme = {
   primary: "#white",
   secondary: "#6c757d",
@@ -22,13 +20,11 @@ const theme = {
   info: "#17a2b8",
 };
 
-// Keyframes for the loading spinner animation
 export const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
 
-// Styled component for the Button
 export const StyledButton = styled.button<ButtonProps>`
   font-weight: bold;
   border: none;
@@ -39,7 +35,6 @@ export const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   justify-content: center;
 
-  /* Size styles */
   ${(props) => {
     switch (props.size) {
       case "small":
@@ -60,7 +55,6 @@ export const StyledButton = styled.button<ButtonProps>`
     }
   }}
 
-  /* Variant styles */
   ${(props) => {
     const color =
       theme[props.color as keyof typeof theme] || props.color || theme.primary;
@@ -109,7 +103,6 @@ export const StyledButton = styled.button<ButtonProps>`
     }
   }}
 
-  /* Disabled state */
   ${(props) =>
     props.disabled &&
     css`
@@ -117,13 +110,11 @@ export const StyledButton = styled.button<ButtonProps>`
       cursor: not-allowed;
     `}
 
-  /* Focus state */
   &:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
   }
 
-  /* Loading state */
   ${(props) =>
     props.loading &&
     css`

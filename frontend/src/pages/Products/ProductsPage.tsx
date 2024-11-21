@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Search, Filter, ChevronDown, SearchIcon, Section } from "lucide-react";
-import { api, getAllProducts, getCategories } from "../../services/api";
+import { Search, Filter, ChevronDown, SearchIcon } from "lucide-react";
+import { getAllProducts, getCategories } from "../../services/api";
 import {
   Title,
   FilterContainer,
@@ -23,6 +23,7 @@ import {
   ProductPrice,
   AddToCartButton,
   NoProductsMessage,
+  Section,
 } from "./ProductsPage.styles";
 
 export interface Product {
@@ -30,11 +31,15 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  category: string;
+  category: {
+    id: string;
+    name: string;
+  };
   image?: string;
   createdAt: string;
   updatedAt: string;
 }
+
 interface Category {
   id: string;
   name: string;
@@ -48,49 +53,46 @@ export default function ProductsSection() {
   const [products, setProducts] = useState<Product[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    const fetchProducst = async () => {
+    // Fetch products and categories concurrently
+    const fetchData = async () => {
       try {
-        const response = await getAllProducts();
-        setProducts(response);
-      } catch (error) {
-        setError("Failed to fetch products");
-        console.error(error);
-      }
-    };
-    const fetchCategories = async () => {
-      try {
-        const response = await getCategories();
-        setCategories(response);
+        const [productsData, categoriesData] = await Promise.all([
+          getAllProducts(),
+          getCategories(),
+        ]);
+
+        setProducts(productsData);
+        setCategories(categoriesData);
       } catch (err) {
-        setError("Failed to fetch categories");
-        console.error(err);
+        setError(`Error fetching data: ${err}`);
+        console.error("Failed to fetch data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCategories();
-    fetchProducst();
+    fetchData();
   }, []);
 
-  const filteredProducts = products
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          (selectedCategory === "All" || product.category === selectedCategory)
-      )
-    : [];
+  // Filter products based on search term and selected category
+  const filteredProducts =
+    products?.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedCategory === "All" ||
+          product.category.name === selectedCategory)
+    ) || [];
 
-  const allCategories = [
-    "All",
-    ...(categories ? categories.map((category) => category.name) : []),
-  ];
+  // Prepare categories for dropdown
+  const allCategories = ["All", ...(categories?.map((cat) => cat.name) || [])];
 
   return (
     <Section>
       <Title>Our Products</Title>
 
+      {/* Filter and Search */}
       <FilterContainer>
         <SearchContainer>
           <Input
@@ -108,6 +110,7 @@ export default function ProductsSection() {
             Filter by: {selectedCategory}
             <ChevronDown size={16} style={{ marginLeft: "0.5rem" }} />
           </Button>
+
           {isDropdownOpen && (
             <DropdownContent>
               {allCategories.map((category) => (
@@ -126,13 +129,14 @@ export default function ProductsSection() {
         </DropdownMenu>
       </FilterContainer>
 
+      {/* Product Grid */}
       <ProductGrid>
         {filteredProducts.map((product) => (
           <ProductCard key={product.id}>
             <ProductImage src={product.image} alt={product.name} />
             <ProductInfo>
               <ProductName>{product.name}</ProductName>
-              <ProductCategory>{product.category}</ProductCategory>
+              <ProductCategory>{product.category.name}</ProductCategory>
               <ProductDetails>
                 <ProductPrice>${Number(product.price).toFixed(2)}</ProductPrice>
                 <AddToCartButton>Add to Cart</AddToCartButton>
@@ -142,11 +146,16 @@ export default function ProductsSection() {
         ))}
       </ProductGrid>
 
-      {filteredProducts.length === 0 && (
+      {/* No Products Message */}
+      {!loading && filteredProducts.length === 0 && (
         <NoProductsMessage>
           No products found. Try adjusting your search or filter.
         </NoProductsMessage>
       )}
+
+      {/* Loading/Error State */}
+      {loading && <NoProductsMessage>Loading products...</NoProductsMessage>}
+      {error && <NoProductsMessage>{error}</NoProductsMessage>}
     </Section>
   );
 }

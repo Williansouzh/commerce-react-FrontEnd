@@ -1,7 +1,6 @@
 import React from "react";
 import { ButtonProps, StyledButton } from "./Bytton.styles";
 
-// Button component
 export const Button: React.FC<ButtonProps> = ({
   color = "primary",
   size = "medium",

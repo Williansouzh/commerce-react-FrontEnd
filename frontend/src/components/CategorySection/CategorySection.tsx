@@ -22,9 +22,7 @@ export default function CategorySectionComponent() {
     const fetchCategories = async () => {
       try {
         const response = await getCategories();
-        console.log("response: ", response);
         setCategories(response);
-        console.log("categories: ", categories);
       } catch (err) {
         setError("Failed to fetch categories");
         console.error(err);
