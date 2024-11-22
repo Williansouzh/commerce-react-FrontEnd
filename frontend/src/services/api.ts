@@ -10,7 +10,19 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+export interface CartProduct {
+  productId: string;
+  name: string;
+  quantity: number;
+  price: string;
+}
 
+export interface CartItem {
+  id: string;
+  userId: string;
+  items: CartProduct[];
+  totalPrice: string;
+}
 interface Category {
   id: string;
   name: string;
@@ -98,5 +110,20 @@ export const createCategory = async (): Promise<[Category]> => {
 };
 export const getAllProducts = async (): Promise<[Product]> => {
   const response = await api.get("/products");
+  return response.data;
+};
+export const getCart = async (): Promise<CartItem> => {
+  const response = await api.get("/cart");
+  return response.data;
+};
+export const addToCart = async (productId: string) => {
+  const response = await api.post(`/cart/${productId}`, {
+    productId,
+  });
+  console.log(productId);
+  return response.data;
+};
+export const removeFromCart = async (productId: string) => {
+  const response = await api.post(`/cart/${productId}`);
   return response.data;
 };

@@ -1,12 +1,5 @@
 import { styled } from "styled-components";
 
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
 export const CartContainer = styled.div`
   position: relative;
   z-index: 1;
