@@ -14,20 +14,13 @@ import {
   DropdownContent,
   DropdownItem,
   ProductGrid,
-  ProductCard,
-  ProductImage,
-  ProductInfo,
-  ProductName,
-  ProductCategory,
-  ProductDetails,
-  ProductPrice,
-  AddToCartButton,
   NoProductsMessage,
   Section,
 } from "./ProductsPage.styles";
+import ProductCard from "../../components/ProductsCard/ProductCard";
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -55,7 +48,6 @@ export default function ProductsSection() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch products and categories concurrently
     const fetchData = async () => {
       try {
         const [productsData, categoriesData] = await Promise.all([
@@ -76,7 +68,6 @@ export default function ProductsSection() {
     fetchData();
   }, []);
 
-  // Filter products based on search term and selected category
   const filteredProducts =
     products?.filter(
       (product) =>
@@ -85,14 +76,11 @@ export default function ProductsSection() {
           product.category.name === selectedCategory)
     ) || [];
 
-  // Prepare categories for dropdown
   const allCategories = ["All", ...(categories?.map((cat) => cat.name) || [])];
 
   return (
     <Section>
       <Title>Our Products</Title>
-
-      {/* Filter and Search */}
       <FilterContainer>
         <SearchContainer>
           <Input
@@ -128,32 +116,16 @@ export default function ProductsSection() {
           )}
         </DropdownMenu>
       </FilterContainer>
-
-      {/* Product Grid */}
       <ProductGrid>
         {filteredProducts.map((product) => (
-          <ProductCard key={product.id}>
-            <ProductImage src={product.image} alt={product.name} />
-            <ProductInfo>
-              <ProductName>{product.name}</ProductName>
-              <ProductCategory>{product.category.name}</ProductCategory>
-              <ProductDetails>
-                <ProductPrice>${Number(product.price).toFixed(2)}</ProductPrice>
-                <AddToCartButton>Add to Cart</AddToCartButton>
-              </ProductDetails>
-            </ProductInfo>
-          </ProductCard>
+          <ProductCard product={product} />
         ))}
       </ProductGrid>
-
-      {/* No Products Message */}
       {!loading && filteredProducts.length === 0 && (
         <NoProductsMessage>
           No products found. Try adjusting your search or filter.
         </NoProductsMessage>
       )}
-
-      {/* Loading/Error State */}
       {loading && <NoProductsMessage>Loading products...</NoProductsMessage>}
       {error && <NoProductsMessage>{error}</NoProductsMessage>}
     </Section>

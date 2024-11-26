@@ -124,6 +124,10 @@ export const addToCart = async (productId: string) => {
   return response.data;
 };
 export const removeFromCart = async (productId: string) => {
-  const response = await api.post(`/cart/${productId}`);
+  const response = await api.delete(`/cart/${productId}`);
+  return response.data;
+};
+export const handleRemoveAllFromToCart = async (productId: string) => {
+  const response = await api.delete(`/cart/${productId}`);
   return response.data;
 };

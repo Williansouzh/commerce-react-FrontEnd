@@ -14,6 +14,7 @@ import {
 } from "./RegisterPage.styles";
 import { Button } from "../../components/Button/Button";
 import { register } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 // Main component
 export default function RegisterPage() {
@@ -21,11 +22,17 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
-
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(email, password, confirmPassword, password);
+      const request = await register(
+        email,
+        password,
+        confirmPassword,
+        password
+      );
+      request ?? navigate("/login");
     } catch (error) {
       console.log(error);
     }
@@ -85,8 +92,8 @@ export default function RegisterPage() {
               <FaLock />
             </Icon>
           </InputGroup>
-          <Button variant="wide" onClick={() => console.log("Clicked!")}>
-            Login
+          <Button variant="wide" type="submit">
+            Register
           </Button>
         </form>
         <Footer>

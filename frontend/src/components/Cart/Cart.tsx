@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 import { ShoppingCart, Plus, Minus, X } from "lucide-react";
 import {
   CartItem as CartItemStyled,
@@ -16,69 +16,27 @@ import {
   CartSummary,
   CheckoutButton,
 } from "./Cart.styles";
-import {
-  CartProduct,
-  getAllProducts,
-  getCart,
-  addToCart,
-} from "../../services/api";
+import { CartItem, useCart } from "../../contexts/CartContext";
+import { CartProduct } from "../../services/api";
 
-// Interface ajustada
 export default function HeaderCart() {
   const [isOpen, setIsOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<CartProduct[]>([]);
+  const { cartItems, addToCart, removeFromCart } = useCart();
 
   const toggleCart = () => setIsOpen(!isOpen);
 
-  const updateQuantity = useCallback((productId: string, change: number) => {
-    setCartItems((prevItems) =>
-      prevItems
-        .map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: Math.max(0, item.quantity + change) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  }, []);
-
-  const removeItem = useCallback((productId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.productId !== productId)
-    );
-  }, []);
-
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = cartItems.reduce(
+    (sum: number, item: CartItem) => sum + item.quantity,
+    0
+  );
   const totalPrice = cartItems.reduce(
-    (sum, item) => sum + Number(item.price) * item.quantity,
+    (sum: number, item: CartItem) => sum + Number(item.price) * item.quantity,
     0
   );
 
   const handleCheckout = () => {
     console.log("Proceeding to checkout");
   };
-
-  const handleAddToCart = async (productId: string) => {
-    try {
-      await addToCart(productId);
-      const updatedCart = await getCart();
-      setCartItems(updatedCart.items || []);
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getCart();
-        setCartItems(response.items || []);
-      } catch (error) {
-        console.error("Failed to fetch cart items:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
   return (
     <CartContainer>
@@ -96,7 +54,7 @@ export default function HeaderCart() {
           <EmptyCartMessage>Your cart is empty</EmptyCartMessage>
         ) : (
           <>
-            {cartItems.map((item) => (
+            {cartItems.map((item: CartItem) => (
               <CartItemStyled key={item.productId}>
                 <ItemInfo>
                   <ItemName>{item.name}</ItemName>
@@ -104,7 +62,7 @@ export default function HeaderCart() {
                 </ItemInfo>
                 <QuantityControl>
                   <QuantityButton
-                    onClick={() => updateQuantity(item.productId, -1)}
+                    onClick={() => removeFromCart(item.productId)}
                     aria-label={`Decrease quantity of ${item.name}`}
                   >
                     <Minus size={16} />
@@ -113,14 +71,21 @@ export default function HeaderCart() {
                     {item.quantity}
                   </span>
                   <QuantityButton
-                    onClick={() => handleAddToCart(item.productId)}
+                    onClick={() =>
+                      addToCart({
+                        productId: item.productId,
+                        name: item.name,
+                        price: item.price,
+                        quantity: 1,
+                      })
+                    }
                     aria-label={`Increase quantity of ${item.name}`}
                   >
                     <Plus size={16} />
                   </QuantityButton>
                 </QuantityControl>
                 <RemoveButton
-                  onClick={() => removeItem(item.productId)}
+                  onClick={() => removeFromCart(item.productId)}
                   aria-label={`Remove ${item.name} from cart`}
                 >
                   <X size={16} />
